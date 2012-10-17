@@ -53,6 +53,9 @@ module OpenTok
       @partner_id = partner_id
       @partner_secret = partner_secret
       @api_url = API_URL
+      # Quick and dirty logging
+      @log = Logger.new(STDOUT)
+      @log.level = Logger::DEBUG
     end
 
     # Generate token for the given session_id. The options you can provide are;
@@ -170,6 +173,7 @@ module OpenTok
     def do_request(path, params, token=nil)
       request = OpenTok::Request.new(@api_url, token, @partner_id, @partner_secret)
       body = request.fetch(path, params)
+			@log.debug(body)
       REXML::Document.new(body)
     end
   end
