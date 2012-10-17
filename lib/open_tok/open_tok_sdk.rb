@@ -9,6 +9,7 @@
 require 'openssl'
 require 'base64'
 require 'rexml/document'
+require 'logger'
 
 DIGEST  = OpenSSL::Digest::Digest.new('sha1')
 
