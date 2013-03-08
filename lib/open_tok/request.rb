@@ -25,15 +25,16 @@ module OpenTok
       end
 
       req = set_headers(req)
-
+      #debugger
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = @api_host.start_with?("https")
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER | OpenSSL::SSL::VERIFY_FAIL_IF_NO_PEER_CERT
-
+      
       http.start {|h| h.request(req) }
     end
 
     def fetch(path, params={})
+      debugger
       res = sendRequest path, params
 
       case res

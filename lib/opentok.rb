@@ -14,5 +14,5 @@ module OpenTok
   API_URL = 'https://api.opentok.com/hl'
 
   autoload :OpenTokSDK, 'open_tok/open_tok_sdk'
-
+  autoload :RoleConstants, 'open_tok/role_constants'
 end

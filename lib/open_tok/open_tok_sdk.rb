@@ -19,13 +19,13 @@ module OpenTok
   autoload :ArchiveTimelineEvent    , 'open_tok/archive_timeline_event'
   autoload :OpenTokException        , 'open_tok/exception'
   autoload :Request                 , 'open_tok/request'
-  autoload :RoleConstants           , 'open_tok/role_constants'
+#  autoload :RoleConstants           , 'open_tok/role_constants'
   autoload :Session                 , 'open_tok/session'
   autoload :SessionPropertyConstants, 'open_tok/session_property_constants'
   autoload :Utils                   , 'open_tok/utils'
 
   class OpenTokSDK
-    attr_reader :api_url
+    attr_accessor :api_url
 
     TOKEN_SENTINEL = "T1=="
 
@@ -98,7 +98,7 @@ module OpenTok
     # See http://www.tokbox.com/opentok/tools/documentation/overview/session_creation.html for more information
     def create_session(location='', opts={})
       opts.merge!({:location => location})
-      doc = do_request '/session/create', opts
+      doc = do_post '/session/create', opts
 
       unless doc.get_elements('Errors').empty?
         raise OpenTokException.new doc.get_elements('Errors')[0].get_elements('error')[0].children.to_s
@@ -169,6 +169,23 @@ module OpenTok
       request = Request.new @api_url, token, @partner_id, @partner_secret
       body = request.fetch path, params
       REXML::Document.new body
+    end
+    
+    def do_post(path, params, token=nil)
+      uri = @api_url + path
+      req_headers = { }
+      req_body = { }
+      if (nil == token)
+        req_headers["X-TB-PARTNER-AUTH"] = @partner_id + ":" + @partner_secret
+      else 
+        req_headers["X-TB-TOKEN-AUTH"] = token 
+      end
+      params.each do |key, value|
+        req_body[key] = value
+      end
+      req_opts = { headers: req_headers, body: req_body }
+      response = HTTParty.post(uri, req_opts)
+      return REXML::Document.new response.body
     end
   end
 end
